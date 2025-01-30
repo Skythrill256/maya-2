@@ -7,7 +7,7 @@ const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJ
 
 export const config = createConfig({
   chains: [polygonAmoy, mainnet],
-
+  ssr: true,
   transports: {
     [polygonAmoy.id]: http(),
     [mainnet.id]: http(),
@@ -17,6 +17,7 @@ export const config = createConfig({
 export const Rainbowconfig = getDefaultConfig({
   appName: 'RainbowKit demo',
   projectId: projectId,
+
   chains: [
     polygonAmoy,
   ],

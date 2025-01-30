@@ -20,8 +20,6 @@ export default function CreateProposalPage() {
     uri: "",
     startTime: "",
     votingPeriod: "7",
-    executionData: "0x",
-    target: "0x0000000000000000000000000000000000000000"
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,9 +46,9 @@ export default function CreateProposalPage() {
         startTime: startTimeUnix,
         votingPeriod: votingPeriodSeconds,
         uri: formData.uri,
-        executionData: formData.executionData as `0x${string}`,
-        target: formData.target as `0x${string}`,
-        hookData: "0x"
+        executionData: "0x12" as `0x${string}`, // Default execution data
+        target: "0x0000000000000000000000000000000000000000" as `0x${string}`, // Default target address
+        hookData: "0x12" // Default hook data
       })
       console.log(tx)
       toast({
@@ -126,30 +124,6 @@ export default function CreateProposalPage() {
                 value={formData.votingPeriod}
                 onChange={(e) => setFormData(prev => ({ ...prev, votingPeriod: e.target.value }))}
                 required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="target">Target Address (Optional)</Label>
-              <Input
-                id="target"
-                placeholder="0x..."
-                value={formData.target}
-                onChange={(e) => setFormData(prev => ({ ...prev, target: e.target.value }))}
-                pattern="^0x[a-fA-F0-9]{40}$"
-                title="Enter a valid Ethereum address starting with 0x"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="executionData">Execution Data (Optional)</Label>
-              <Input
-                id="executionData"
-                placeholder="0x..."
-                value={formData.executionData}
-                onChange={(e) => setFormData(prev => ({ ...prev, executionData: e.target.value }))}
-                pattern="^0x[a-fA-F0-9]*$"
-                title="Enter valid hex data starting with 0x"
               />
             </div>
 

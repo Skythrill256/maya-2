@@ -2,7 +2,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { GraphQLClient, gql } from "graphql-request";
 
-const client = new GraphQLClient("http://localhost:42069");
+const client = new GraphQLClient("https://new-ponder-production.up.railway.app");
+
+
 
 export type Proposal = {
   id: bigint;
@@ -48,32 +50,38 @@ export const useProposals = () => {
               }
             }
           `,
-          { id: "1" }
+          { id: "1" } // Passing the required id parameter
         );
 
+        console.log('GraphQL Response:', response);
+
+        // Return empty array if no proposals
         if (!response || !Array.isArray(response.proposals)) {
-          console.log("No proposals found or invalid response:", response);
+          console.log('No proposals found or invalid response:', response);
           return [];
         }
 
-        return response.proposals.map((proposal) => ({
-          id: BigInt(proposal.id),
-          proposerId: proposal.proposerId,
-          uri: proposal.uri,
-          startTime: BigInt(proposal.startTime),
-          endTime: BigInt(proposal.endTime),
-          forScore: BigInt(proposal.forScore),
-          againstScore: BigInt(proposal.againstScore),
-          executed: proposal.executed,
-        }));
+        // Transform the response to match the Proposal type
+        return response.proposals
+          .filter(proposal => proposal && typeof proposal === 'object' && 'id' in proposal)
+          .map((proposal) => ({
+            id: BigInt(proposal.id || '0'),
+            proposerId: proposal.proposerId || '',
+            uri: proposal.uri || '',
+            startTime: BigInt(proposal.startTime || '0'),
+            endTime: BigInt(proposal.endTime || '0'),
+            forScore: BigInt(proposal.forScore || '0'),
+            againstScore: BigInt(proposal.againstScore || '0'),
+            executed: Boolean(proposal.executed),
+          }));
       } catch (error) {
-        console.error("GraphQL query error:", error);
+        console.error('GraphQL query error:', error);
         throw error;
       }
     },
     staleTime: 30000,
     refetchInterval: 30000,
-    initialData: [],
+    initialData: [], // Provide empty array as initial data
   });
 };
 
@@ -97,36 +105,36 @@ export const useHighestVotes = () => {
           }
         `;
 
+        // Fetch each proposal individually and combine results
         const proposalIds = Array.from({ length: 10 }, (_, i) => i.toString());
         const results = await Promise.all(
           proposalIds.map(async (id) => {
             try {
-              const response = await client.request<ProposalResponse>(query, { id });
-              return response.proposals.map((proposal) => ({
-                id: BigInt(proposal.id),
-                proposerId: proposal.proposerId,
-                uri: proposal.uri,
-                startTime: BigInt(proposal.startTime),
-                endTime: BigInt(proposal.endTime),
-                forScore: BigInt(proposal.forScore),
-                againstScore: BigInt(proposal.againstScore),
-                executed: proposal.executed,
-              }));
-            } catch (error) {
-              console.warn(`Error fetching proposal for ID ${id}:`, error);
+              const response: ProposalResponse = await client.request(query, { id });
+              return response.proposals;
+            } catch {
               return null;
             }
           })
         );
 
+        // Filter out null responses and flatten the array
         const proposals = results
-          .filter((result): result is Proposal[] => result !== null) // Type guard for filtering non-null
-          .flat();
+          .filter((result): result is NonNullable<typeof result> => result !== null)
+          .flat()
+          .map((proposal: any) => ({
+            ...proposal,
+            id: BigInt(proposal.id),
+            startTime: BigInt(proposal.startTime),
+            endTime: BigInt(proposal.endTime),
+            forScore: BigInt(proposal.forScore),
+            againstScore: BigInt(proposal.againstScore),
+          }));
 
-        console.log("Processed proposals:", proposals);
+        console.log('Processed proposals:', proposals);
         return proposals;
       } catch (error) {
-        console.error("Error fetching proposals:", error);
+        console.error('Error fetching proposals:', error);
         throw error;
       }
     },

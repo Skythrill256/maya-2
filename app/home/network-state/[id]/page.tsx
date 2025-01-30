@@ -147,7 +147,7 @@ export default function NetworkStatePage() {
       const hash = await casteVotefunc({
         proposalId: proposalId,
         weight: weight,
-        hookData: "0x"
+        hookData: "0x12"
       })
 
       const receipt = await publicClient.waitForTransactionReceipt({
