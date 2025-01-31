@@ -48,7 +48,7 @@ export default function CreateProposalPage() {
         uri: formData.uri,
         executionData: "0x12" as `0x${string}`, // Default execution data
         target: "0x0000000000000000000000000000000000000000" as `0x${string}`, // Default target address
-        hookData: "0x12" // Default hook data
+        hookData: "0x"
       })
       console.log(tx)
       toast({
