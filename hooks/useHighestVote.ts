@@ -106,7 +106,7 @@ export const useHighestVotes = () => {
         `;
 
         // Fetch each proposal individually and combine results
-        const proposalIds = Array.from({ length: 10 }, (_, i) => i.toString());
+        const proposalIds = Array.from({ length: 15 }, (_, i) => i.toString());
         const results = await Promise.all(
           proposalIds.map(async (id) => {
             try {

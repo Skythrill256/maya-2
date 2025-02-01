@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -8,7 +9,7 @@ import { Input } from "@/components/main/input"
 import { Label } from "@/components/main/label"
 import { useToast } from "@/components/ui/use-toast"
 import { createProposalfunc } from "@/lib/web3/functions"
-import { useAccount } from 'wagmi'
+import { useAccount } from "wagmi"
 
 export default function CreateProposalPage() {
   const router = useRouter()
@@ -40,16 +41,18 @@ export default function CreateProposalPage() {
 
       const startTimeDate = new Date(formData.startTime)
       const startTimeUnix = BigInt(Math.floor(startTimeDate.getTime() / 1000))
+
       const votingPeriodSeconds = BigInt(parseInt(formData.votingPeriod) * 24 * 60 * 60)
 
       const tx = await createProposalfunc({
         startTime: startTimeUnix,
         votingPeriod: votingPeriodSeconds,
         uri: formData.uri,
-        executionData: "0x12" as `0x${string}`, // Default execution data
-        target: "0x0000000000000000000000000000000000000000" as `0x${string}`, // Default target address
+        executionData: "0x4d53646d" as `0x${string}`,
+        target: "0x40d5250D1ce81fdD1F0E0FB4F471E57AA0c1FaD3" as `0x${string}`,
         hookData: "0x"
       })
+
       console.log(tx)
       toast({
         title: "Proposal created successfully",
