@@ -4,8 +4,6 @@ import { GraphQLClient, gql } from "graphql-request";
 
 const client = new GraphQLClient("https://new-ponder-production.up.railway.app");
 
-
-
 export type Proposal = {
   id: bigint;
   proposerId: string;
